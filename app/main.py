@@ -6,9 +6,15 @@ from server import server_thread
 from datetime import datetime
 import pytz
 import asyncio
+import certifi
+import ssl
+import urllib.request
 
 TOKEN = os.environ["TOKEN"]
 ADMIN_USER_ID = int(os.environ["ADMIN_USER_ID"])
+
+# SSL設定
+ssl_context = ssl.create_default_context(cafile=certifi.where())
 
 # YT-DLPの設定
 ydl_opts = {
@@ -17,11 +23,14 @@ ydl_opts = {
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'opus',
     }],
-    'nocheckcertificate': True,
+    'nocheckcertificate': False,
     'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'cookiefile': 'app/cookies.txt',
     'quiet': True,
     'no_warnings': True,
+    'http_headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    },
+    'cookiefile': 'app/cookies.txt',
 }
 
 class MusicState:
@@ -32,6 +41,9 @@ class MusicState:
         self.queue = []
 
 music_states = defaultdict(MusicState)
+
+# DMの応答履歴を保持する辞書
+dm_response_history = {}
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -49,6 +61,8 @@ async def play_music(voice_client, url, guild_id):
         while retry_count < max_retries:
             try:
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    # SSLコンテキストを使用
+                    ydl._opener.add_handler(urllib.request.HTTPSHandler(context=ssl_context))
                     info = ydl.extract_info(url, download=False)
                     url2 = info['url']
                     source = await discord.FFmpegOpusAudio.from_probe(
@@ -132,10 +146,21 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    # DMの場合は一度だけエラーメッセージを送信して終了
-    if message.guild is None and message.content.startswith('$'):
-        await message.channel.send("❌ このボットはDMでは使用できません。サーバー内で使用してください。")
-        return
+    # DMの処理
+    if message.guild is None:
+        # 前回の応答から60秒以内は新しいメッセージを送信しない
+        user_id = message.author.id
+        current_time = datetime.now().timestamp()
+        
+        if user_id in dm_response_history:
+            last_response_time = dm_response_history[user_id]
+            if current_time - last_response_time < 60:  # 60秒のクールダウン
+                return
+        
+        if message.content.startswith('$'):
+            dm_response_history[user_id] = current_time
+            await message.channel.send("❌ このボットはDMでは使用できません。サーバー内で使用してください。")
+            return
 
     if message.content.startswith('$'):
         command = message.content.lower()
@@ -215,7 +240,8 @@ async def on_message(message):
                     await message.channel.send('❌ 再生できませんでした')
             except Exception as e:
                 print(f'接続エラー: {e}')
-                await loading_msg.delete()
+                if 'loading_msg' in locals():
+                    await loading_msg.delete()
                 await message.channel.send('❌ 接続エラーが発生しました。しばらく待ってから再試行してください。')
         
         elif command == '$s':
@@ -232,6 +258,10 @@ async def on_message(message):
             
             state.is_loop = not state.is_loop
             await message.channel.send(f'🔄 ループ再生: {"オン" if state.is_loop else "オフ"}')
+        
+        elif command == '$shutdown' and message.author.id == ADMIN_USER_ID:
+            await message.channel.send('⚡ BOTをシャットダウンします...')
+            await client.close()
 
 # Koyeb用 サーバー立ち上げ
 server_thread()
