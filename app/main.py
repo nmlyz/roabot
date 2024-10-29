@@ -23,14 +23,15 @@ ydl_opts = {
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'opus',
     }],
-    'nocheckcertificate': False,
+    'nocheckcertificate': True,  # 証明書チェックを無効化
     'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     'quiet': True,
     'no_warnings': True,
-    'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    },
     'cookiefile': 'app/cookies.txt',
+    'format_sort': ['acodec:opus/acodec:vorbis'],
+    'audio_quality': 0,
+    'extract_flat': True,
+    'socket_timeout': 30,
 }
 
 class MusicState:
