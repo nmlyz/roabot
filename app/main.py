@@ -16,8 +16,11 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+    if message.content.startswith('$test'):
+        await message.channel.send('テストです')
+
+    elif message.content.startswith('$ping')
+        await message.channel.send('pong!')
 
 # Koyeb用 サーバー立ち上げ
 server_thread()
