@@ -22,10 +22,11 @@ ydl_opts = {
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'opus',
     }],
-    'nocheckcertificate': True,
+    'nocheckcertificate': True,  # SSL証明書チェックを無効化
     'quiet': True,
     'no_warnings': True,
     'extract_flat': True,
+    'verbose': True,  # デバッグ情報を表示
     'extractor_args': {
         'youtube': {
             'skip': ['dash', 'hls'],
@@ -34,6 +35,74 @@ ydl_opts = {
     },
     'socket_timeout': 30,
 }
+
+async def play_music(voice_client, url, guild_id):
+    state = music_states[guild_id]
+    
+    try:
+        max_retries = 3
+        retry_count = 0
+        
+        while retry_count < max_retries:
+            try:
+                # デバッグ情報を表示
+                print(f"試行 {retry_count + 1}/3: {url}")
+                
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    # 環境変数を設定
+                    os.environ['PYTHONHTTPSVERIFY'] = '0'
+                    
+                    try:
+                        info = ydl.extract_info(url, download=False)
+                        if 'entries' in info:
+                            info = info['entries'][0]
+                        url2 = info['url']
+                        print(f"URL取得成功: {url2[:50]}...")  # URLの一部を表示
+                        
+                        source = await discord.FFmpegOpusAudio.from_probe(
+                            url2,
+                            before_options="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
+                            options="-vn"
+                        )
+                        break
+                    except Exception as e:
+                        print(f"URL抽出エラー: {e}")
+                        raise e
+                        
+            except Exception as e:
+                retry_count += 1
+                print(f"エラー発生 (試行 {retry_count}): {str(e)}")
+                if retry_count >= max_retries:
+                    raise e
+                await asyncio.sleep(1)
+        
+        def after_playing(error):
+            if error:
+                print(f'再生エラー: {error}')
+            elif state.is_loop and state.current_url:
+                asyncio.run_coroutine_threadsafe(
+                    play_music(voice_client, state.current_url, guild_id),
+                    client.loop
+                )
+            elif state.queue:
+                next_url = state.queue.pop(0)
+                asyncio.run_coroutine_threadsafe(
+                    play_music(voice_client, next_url, guild_id),
+                    client.loop
+                )
+        
+        if voice_client.is_playing():
+            voice_client.stop()
+        
+        state.current_url = url
+        state.now_playing = info.get('title', 'Unknown title')
+        voice_client.play(source, after=after_playing)
+        
+        return info.get('title', 'Unknown title')
+        
+    except Exception as e:
+        print(f'最終エラー: {e}')
+        return None
 
 class MusicState:
     def __init__(self):
