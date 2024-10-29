@@ -66,7 +66,8 @@ async def on_message(message):
 🤖 BOT名: {client.user.name}
 ⚡ 接続状態: オンライン
 ⏰ 現在時刻: {current_time}
-🏓 Pingレイテンシー: {round(client.latency * 1000)}ms
+🏓 Ping応答速度: {round(client.latency * 1000)}ms
+(~50 = GOOD)
 """
             await message.channel.send(status_text)
 
