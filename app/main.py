@@ -77,8 +77,31 @@ async def play_music(voice_client, url, guild_id):
 
 @client.event
 async def on_ready():
-    # 既存のon_ready関数の内容をここに維持
-    # ...（変更なし）
+    jst = pytz.timezone('Asia/Tokyo')
+    current_time = datetime.now(jst).strftime('%Y-%m-%d %H:%M:%S')
+    
+    print('='*50)
+    print(f'[{current_time}] BOTが起動しました！')
+    print(f'BOT名: {client.user.name}')
+    print(f'BOT ID: {client.user.id}')
+    print(f'Admin ID: {ADMIN_USER_ID}')
+    print(f'Discord.py バージョン: {discord.__version__}')
+    print('='*50)
+    
+    try:
+        admin_user = await client.fetch_user(ADMIN_USER_ID)
+        await admin_user.send(f'🚀 BOTが再起動されました！\n⏰ 起動時刻: {current_time}')
+    except:
+        print("管理者への通知送信に失敗しました")
+    
+    for guild in client.guilds:
+        for channel in guild.text_channels:
+            if channel.name in ['一般', 'general', 'bot', 'bot-log']:
+                try:
+                    await channel.send(f'🚀 BOTが再起動されました！\n⏰ 起動時刻: {current_time}')
+                    break
+                except:
+                    continue
 
 @client.event
 async def on_message(message):
