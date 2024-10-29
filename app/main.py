@@ -2,9 +2,11 @@ import discord
 import os
 from server import server_thread
 from datetime import datetime
-import pytz  # 日本時間用
+import pytz
 
 TOKEN = os.environ["TOKEN"]
+# ログを送信したいユーザーのID（あなたのDiscord ID）を環境変数から取得
+ADMIN_USER_ID = int(os.environ.get("ADMIN_USER_ID", "YOUR_DISCORD_ID"))  # あなたのDiscord IDを設定
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -12,9 +14,22 @@ intents.voice_states = True
 
 client = discord.Client(intents=intents)
 
+async def send_log(log_text):
+    """管理者にDMでログを送信する関数"""
+    try:
+        # 日本時間で現在時刻を取得
+        jst = pytz.timezone('Asia/Tokyo')
+        current_time = datetime.now(jst).strftime('%Y年%m月%d日 %H時%M分%S秒')
+        
+        # 管理者ユーザーを取得
+        admin_user = await client.fetch_user(ADMIN_USER_ID)
+        if admin_user:
+            await admin_user.send(f"```\n[{current_time}] {log_text}\n```")
+    except Exception as e:
+        print(f"ログ送信エラー: {e}")
+
 @client.event
 async def on_ready():
-    # 日本時間に変換
     jst = pytz.timezone('Asia/Tokyo')
     current_time = datetime.now(jst).strftime('%Y-%m-%d %H:%M:%S')
     
@@ -25,16 +40,8 @@ async def on_ready():
     print(f'Discord.py バージョン: {discord.__version__}')
     print('='*50)
     
-    # デプロイ通知をDiscordチャンネルに送信
-    for guild in client.guilds:
-        for channel in guild.text_channels:
-            # 一般チャンネルまたはbotチャンネルを探す
-            if channel.name in ['一般', 'general', 'bot', 'bot-log']:
-                try:
-                    await channel.send(f'🚀 BOTが再起動されました！\n⏰ 起動時刻: {current_time}')
-                    break  # 1つのサーバーにつき1回だけ通知
-                except:
-                    continue
+    # 起動ログをDMに送信
+    await send_log("BOTが起動しました")
 
 @client.event
 async def on_message(message):
@@ -43,6 +50,9 @@ async def on_message(message):
 
     if message.content.startswith('$'):
         command = message.content.lower()
+        
+        # コマンド実行ログ
+        await send_log(f"コマンド実行: {command} (実行者: {message.author.name})")
         
         if command == '$hello':
             await message.channel.send('Hello!')
@@ -57,7 +67,6 @@ async def on_message(message):
             await message.channel.send(help_text)
             
         elif command == '$status':
-            # 日本時間で現在時刻を取得
             jst = pytz.timezone('Asia/Tokyo')
             current_time = datetime.now(jst).strftime('%Y-%m-%d %H:%M:%S')
             
@@ -71,6 +80,14 @@ async def on_message(message):
 """
             await message.channel.send(status_text)
 
+@client.event
+async def on_error(event, *args, **kwargs):
+    """エラーが発生した場合のログ"""
+    await send_log(f"エラーが発生しました: {event}")
+
 # Koyeb用 サーバー立ち上げ
 server_thread()
+
+# 起動前にログを送信
+print("BOTを起動します...")
 client.run(TOKEN)
