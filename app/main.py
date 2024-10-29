@@ -9,6 +9,7 @@ import asyncio
 import certifi
 import ssl
 import urllib.request
+import browser_cookie3
 
 TOKEN = os.environ["TOKEN"]
 ADMIN_USER_ID = int(os.environ["ADMIN_USER_ID"])
@@ -23,15 +24,20 @@ ydl_opts = {
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'opus',
     }],
-    'nocheckcertificate': True,  # 証明書チェックを無効化
-    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'nocheckcertificate': True,
     'quiet': True,
     'no_warnings': True,
-    'cookiefile': 'app/cookies.txt',
-    'format_sort': ['acodec:opus/acodec:vorbis'],
-    'audio_quality': 0,
-    'extract_flat': True,
+    'cookiesfrombrowser': ('chrome',),
+    'extractor_args': {
+        'youtube': {
+            'player_client': ['android'],
+            'player_skip': ['webpage', 'configs'],
+        }
+    },
     'socket_timeout': 30,
+    'http_headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    }
 }
 
 class MusicState:
@@ -40,6 +46,8 @@ class MusicState:
         self.current_url = None
         self.is_loop = False
         self.queue = []
+        self.volume = 1.0
+        self.now_playing = None
 
 music_states = defaultdict(MusicState)
 
@@ -62,8 +70,6 @@ async def play_music(voice_client, url, guild_id):
         while retry_count < max_retries:
             try:
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    # SSLコンテキストを使用
-                    ydl._opener.add_handler(urllib.request.HTTPSHandler(context=ssl_context))
                     info = ydl.extract_info(url, download=False)
                     url2 = info['url']
                     source = await discord.FFmpegOpusAudio.from_probe(
@@ -96,6 +102,7 @@ async def play_music(voice_client, url, guild_id):
             voice_client.stop()
         
         state.current_url = url
+        state.now_playing = info.get('title', 'Unknown title')
         voice_client.play(source, after=after_playing)
         
         return info.get('title', 'Unknown title')
@@ -180,6 +187,9 @@ async def on_message(message):
 `$p [URL]` - YouTubeの音声を再生します
 `$s` - 現在の曲をスキップします
 `$l` - 現在の曲のループ再生を切り替えます
+`$np` - 現在再生中の曲を表示します
+`$q` - 現在のキューを表示します
+`$vol [0-100]` - 音量を設定します
 """
             if message.author.id == ADMIN_USER_ID:
                 help_text += "\n**管理者用コマンド:**\n`$shutdown` - BOTをシャットダウンします"
@@ -259,6 +269,36 @@ async def on_message(message):
             
             state.is_loop = not state.is_loop
             await message.channel.send(f'🔄 ループ再生: {"オン" if state.is_loop else "オフ"}')
+
+        elif command == '$np':
+            if state.now_playing:
+                await message.channel.send(f'🎵 再生中: {state.now_playing}')
+            else:
+                await message.channel.send('❌ 現在再生中の曲はありません')
+
+        elif command.startswith('$vol '):
+            try:
+                volume = int(message.content[5:])
+                if not 0 <= volume <= 100:
+                    await message.channel.send('❌ 音量は0から100の間で指定してください')
+                    return
+                
+                state.volume = volume / 100
+                if state.voice_client and state.voice_client.source:
+                    state.voice_client.source.volume = state.volume
+                await message.channel.send(f'🔊 音量を{volume}%に設定しました')
+            except ValueError:
+                await message.channel.send('❌ 正しい数値を指定してください')
+
+        elif command == '$q':
+            if not state.queue:
+                await message.channel.send('📝 再生キューは空です')
+                return
+            
+            queue_text = "**再生キュー:**\n"
+            for i, url in enumerate(state.queue, 1):
+                queue_text += f"{i}. {url}\n"
+            await message.channel.send(queue_text)
         
         elif command == '$shutdown' and message.author.id == ADMIN_USER_ID:
             await message.channel.send('⚡ BOTをシャットダウンします...')
