@@ -15,94 +15,43 @@ ADMIN_USER_ID = int(os.environ["ADMIN_USER_ID"])
 # SSL設定
 ssl_context = ssl.create_default_context(cafile=certifi.where())
 
-# YT-DLPの設定
+import discord
+import os
+import yt_dlp
+from collections import defaultdict
+from server import server_thread
+from datetime import datetime
+import pytz
+import asyncio
+import re
+import urllib.parse
+import json
+
+TOKEN = os.environ["TOKEN"]
+ADMIN_USER_ID = int(os.environ["ADMIN_USER_ID"])
+
+# YT-DLP設定を更新
 ydl_opts = {
     'format': 'bestaudio/best',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'opus',
     }],
-    'nocheckcertificate': True,  # SSL証明書チェックを無効化
     'quiet': True,
     'no_warnings': True,
     'extract_flat': True,
-    'verbose': True,  # デバッグ情報を表示
     'extractor_args': {
         'youtube': {
-            'skip': ['dash', 'hls'],
-            'player_client': ['android'],
+            'player_client': ['android', 'web'],
+            'skip': ['webpage', 'dash', 'hls'],
         },
     },
-    'socket_timeout': 30,
+    'http_headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
+        'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    }
 }
-
-async def play_music(voice_client, url, guild_id):
-    state = music_states[guild_id]
-    
-    try:
-        max_retries = 3
-        retry_count = 0
-        
-        while retry_count < max_retries:
-            try:
-                # デバッグ情報を表示
-                print(f"試行 {retry_count + 1}/3: {url}")
-                
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    # 環境変数を設定
-                    os.environ['PYTHONHTTPSVERIFY'] = '0'
-                    
-                    try:
-                        info = ydl.extract_info(url, download=False)
-                        if 'entries' in info:
-                            info = info['entries'][0]
-                        url2 = info['url']
-                        print(f"URL取得成功: {url2[:50]}...")  # URLの一部を表示
-                        
-                        source = await discord.FFmpegOpusAudio.from_probe(
-                            url2,
-                            before_options="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
-                            options="-vn"
-                        )
-                        break
-                    except Exception as e:
-                        print(f"URL抽出エラー: {e}")
-                        raise e
-                        
-            except Exception as e:
-                retry_count += 1
-                print(f"エラー発生 (試行 {retry_count}): {str(e)}")
-                if retry_count >= max_retries:
-                    raise e
-                await asyncio.sleep(1)
-        
-        def after_playing(error):
-            if error:
-                print(f'再生エラー: {error}')
-            elif state.is_loop and state.current_url:
-                asyncio.run_coroutine_threadsafe(
-                    play_music(voice_client, state.current_url, guild_id),
-                    client.loop
-                )
-            elif state.queue:
-                next_url = state.queue.pop(0)
-                asyncio.run_coroutine_threadsafe(
-                    play_music(voice_client, next_url, guild_id),
-                    client.loop
-                )
-        
-        if voice_client.is_playing():
-            voice_client.stop()
-        
-        state.current_url = url
-        state.now_playing = info.get('title', 'Unknown title')
-        voice_client.play(source, after=after_playing)
-        
-        return info.get('title', 'Unknown title')
-        
-    except Exception as e:
-        print(f'最終エラー: {e}')
-        return None
 
 class MusicState:
     def __init__(self):
@@ -124,29 +73,70 @@ intents.voice_states = True
 
 client = discord.Client(intents=intents)
 
+def extract_video_id(url):
+    """URLからvideo_idを抽出"""
+    patterns = [
+        r'(?:youtube\.com/watch\?v=|youtu\.be/)([^&\n?]*)',
+        r'youtube\.com/shorts/([^&\n?]*)'
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    return None
+
 async def play_music(voice_client, url, guild_id):
     state = music_states[guild_id]
     
     try:
+        video_id = extract_video_id(url)
+        if not video_id:
+            raise ValueError("Invalid YouTube URL")
+
         max_retries = 3
         retry_count = 0
+        last_error = None
         
         while retry_count < max_retries:
             try:
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    info = ydl.extract_info(url, download=False)
-                    if 'entries' in info:
-                        info = info['entries'][0]
-                    url2 = info['url']
-                    source = await discord.FFmpegOpusAudio.from_probe(
-                        url2,
-                        before_options="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
+                    # androidクライアントとしてアクセス
+                    ydl.params['extractor_args']['youtube']['player_client'] = ['android']
+                    info = await asyncio.get_event_loop().run_in_executor(
+                        None, 
+                        lambda: ydl.extract_info(url, download=False)
                     )
+                    
+                    if not info:
+                        raise Exception("Failed to extract video info")
+                    
+                    url2 = info.get('url')
+                    if not url2 and 'formats' in info:
+                        # 最高品質の音声フォーマットを選択
+                        formats = info['formats']
+                        audio_formats = [f for f in formats if f.get('acodec') != 'none']
+                        if audio_formats:
+                            url2 = sorted(audio_formats, key=lambda x: x.get('abr', 0))[-1]['url']
+                    
+                    if not url2:
+                        raise Exception("No audio URL found")
+
+                    # FFmpegオプションを設定
+                    ffmpeg_options = {
+                        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+                        'options': '-vn -b:a 128k'
+                    }
+                    
+                    source = await discord.FFmpegOpusAudio.from_probe(url2, **ffmpeg_options)
                     break
+                    
             except Exception as e:
+                print(f"試行 {retry_count + 1} でエラー: {str(e)}")
+                last_error = e
                 retry_count += 1
                 if retry_count >= max_retries:
-                    raise e
+                    raise last_error
                 await asyncio.sleep(1)
         
         def after_playing(error):
