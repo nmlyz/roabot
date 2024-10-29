@@ -6,9 +6,14 @@ from server import server_thread
 from datetime import datetime
 import pytz
 import asyncio
+import certifi
+import ssl
 
 TOKEN = os.environ["TOKEN"]
 ADMIN_USER_ID = int(os.environ["ADMIN_USER_ID"])
+
+# SSL設定
+ssl_context = ssl.create_default_context(cafile=certifi.where())
 
 # YT-DLPの設定
 ydl_opts = {
@@ -27,6 +32,7 @@ ydl_opts = {
             'player_client': ['android'],
         },
     },
+    'socket_timeout': 30,
 }
 
 class MusicState:
