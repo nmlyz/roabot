@@ -159,7 +159,7 @@ async def on_message(message):
             if response_time < 100:
                 speed_status = "とても良好"
             elif response_time < 200:
-                speed_status = "良好
+                speed_status = "良好"
             elif response_time < 500:
                 speed_status = "普通"
             else:
