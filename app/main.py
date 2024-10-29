@@ -1,12 +1,11 @@
+# main.py
 import discord
-import dotenv
 import os
-
 from server import server_thread
 
-dotenv.load_dotenv()
+# 環境変数から直接TOKENを取得
+TOKEN = os.environ["TOKEN"]
 
-TOKEN = os.environ.get("TOKEN")
 intents = discord.Intents.default()
 intents.message_content = True
 intents.voice_states = True
@@ -16,7 +15,7 @@ client = discord.Client(intents=intents)
 async def on_message(message):
     if message.author == client.user:
         return
-
+    
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
 
