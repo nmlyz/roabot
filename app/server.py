@@ -1,17 +1,17 @@
 from threading import Thread
+from flask import Flask
 
-from fastapi import FastAPI
-import uvicorn
+app = Flask(__name__)
 
-app = FastAPI()
+@app.route('/')
+def home():
+    return {"message": "Server is Online."}
 
-@app.get("/")
-async def root():
-	return {"message": "Server is Online."}
-
-def start():
-	uvicorn.run(app, host="0.0.0.0", port=8080)
+def run_flask():
+    # Koyebの設定に合わせて8080ポートで起動
+    app.run(host='0.0.0.0', port=8080)
 
 def server_thread():
-	t = Thread(target=start)
-	t.start()
+    t = Thread(target=run_flask)
+    t.daemon = True  # メインプログラム終了時にスレッドも終了
+    t.start()

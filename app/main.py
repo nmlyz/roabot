@@ -17,6 +17,11 @@ ydl_opts = {
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'opus',
     }],
+    'quiet': True,
+    'no_warnings': True,
+    'extract_flat': True,
+    'nocheckcertificate': True,
+    'cookiefile': 'cookies.txt'
 }
 
 # 音楽プレイヤーの状態管理用
@@ -44,7 +49,7 @@ async def play_music(voice_client, url, guild_id):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             url2 = info['url']
-            source = await discord.FFmpegOpusAudio.from_probe(url2)
+            source = await discord.FFmpegOpusAudio.from_probe(url2, options='-vn')
             
             def after_playing(error):
                 if error:
@@ -108,38 +113,51 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    # DMでのコマンド実行を防ぐ
+    if not message.guild:
+        await message.channel.send('❌ このBOTはDMでは使用できません。サーバー内でお使いください。')
+        return
+
     if message.content.startswith('$'):
         command = message.content.lower()
         state = music_states[message.guild.id]
         
         # 音楽関連のコマンド
         if command.startswith('$p '):
-            # ユーザーがVCに接続しているか確認
-            if not message.author.voice:
-                await message.channel.send('❌ 先にボイスチャンネルに参加してください')
-                return
+            try:
+                # ユーザーがVCに接続しているか確認
+                if not message.author.voice:
+                    await message.channel.send('❌ 先にボイスチャンネルに参加してください')
+                    return
+                    
+                url = message.content[3:].strip()
+                if not url.startswith('https://www.youtube.com/') and not url.startswith('https://youtu.be/'):
+                    await message.channel.send('❌ YouTubeのURLを指定してください')
+                    return
                 
-            url = message.content[3:].strip()
-            if not url.startswith('https://www.youtube.com/') and not url.startswith('https://youtu.be/'):
-                await message.channel.send('❌ YouTubeのURLを指定してください')
-                return
-            
-            # ボイスチャンネルに接続
-            if not state.voice_client:
-                state.voice_client = await message.author.voice.channel.connect()
-            elif state.voice_client.channel != message.author.voice.channel:
-                await state.voice_client.move_to(message.author.voice.channel)
-            
-            # 音楽を再生
-            title = await play_music(state.voice_client, url, message.guild.id)
-            if title:
-                await message.channel.send(f'🎵 再生開始: {title}')
-            else:
-                await message.channel.send('❌ 再生できませんでした')
+                # 再生開始メッセージを送信
+                processing_msg = await message.channel.send('🎵 音楽の読み込み中...')
+                
+                # ボイスチャンネルに接続
+                if not state.voice_client:
+                    state.voice_client = await message.author.voice.channel.connect()
+                elif state.voice_client.channel != message.author.voice.channel:
+                    await state.voice_client.move_to(message.author.voice.channel)
+                
+                # 音楽を再生
+                title = await play_music(state.voice_client, url, message.guild.id)
+                if title:
+                    await processing_msg.edit(content=f'🎵 再生開始: {title}')
+                else:
+                    await processing_msg.edit(content='❌ 再生できませんでした。URLを確認してください。')
+            except Exception as e:
+                print(f'Error in play command: {e}')
+                await message.channel.send('❌ エラーが発生しました。しばらく待ってから再試行してください。')
         
         elif command == '$s':
             if state.voice_client and state.voice_client.is_playing():
                 state.voice_client.stop()
+                state.is_loop = False  # ループも解除
                 await message.channel.send('⏭️ スキップしました')
             else:
                 await message.channel.send('❌ 現在再生中の曲はありません')
@@ -170,6 +188,11 @@ async def on_message(message):
                 help_text += "\n**管理者用コマンド:**\n`$shutdown` - BOTをシャットダウンします"
             
             await message.channel.send(help_text)
+
+        elif command == '$shutdown' and message.author.id == ADMIN_USER_ID:
+            await message.channel.send('⚠️ BOTをシャットダウンします。再度起動する場合はkoyebから再起動して下さい')
+            await client.close()
+            return
             
         elif command == '$status':
             jst = pytz.timezone('Asia/Tokyo')
@@ -188,14 +211,35 @@ async def on_message(message):
             else:
                 speed_status = "やや遅い"
             
+            # 音楽の再生状態を取得
+            music_status = "停止中"
+            current_title = "なし"
+            if state.voice_client and state.voice_client.is_playing():
+                music_status = "再生中"
+                if state.is_loop:
+                    music_status += "（ループ有効）"
+                try:
+                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                        info = ydl.extract_info(state.current_url, download=False)
+                        current_title = info.get('title', 'Unknown title')
+                except:
+                    current_title = "取得できません"
+            
             status_text = f"""
 **BOTの状態**
 🤖 BOT名: {client.user.name}
 ⚡ 接続状態: オンライン
 ⏰ 現在時刻: {current_time}
 📶 応答速度: {response_time}ミリ秒 ({speed_status})
+🎵 音楽: {music_status}
+🎶 現在の曲: {current_title}
 """
             await message.channel.send(status_text)
+
+# エラーハンドリングを追加
+@client.event
+async def on_error(event, *args, **kwargs):
+    print(f'Error in {event}:', exc_info=True)
 
 # Koyeb用 サーバー立ち上げ
 server_thread()
