@@ -6,16 +6,9 @@ from server import server_thread
 from datetime import datetime
 import pytz
 import asyncio
-import certifi
-import ssl
-import urllib.request
-import browser_cookie3
 
 TOKEN = os.environ["TOKEN"]
 ADMIN_USER_ID = int(os.environ["ADMIN_USER_ID"])
-
-# SSL設定
-ssl_context = ssl.create_default_context(cafile=certifi.where())
 
 # YT-DLPの設定
 ydl_opts = {
@@ -27,17 +20,13 @@ ydl_opts = {
     'nocheckcertificate': True,
     'quiet': True,
     'no_warnings': True,
-    'cookiesfrombrowser': ('chrome',),
+    'extract_flat': True,
     'extractor_args': {
         'youtube': {
+            'skip': ['dash', 'hls'],
             'player_client': ['android'],
-            'player_skip': ['webpage', 'configs'],
-        }
+        },
     },
-    'socket_timeout': 30,
-    'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    }
 }
 
 class MusicState:
@@ -71,6 +60,8 @@ async def play_music(voice_client, url, guild_id):
             try:
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     info = ydl.extract_info(url, download=False)
+                    if 'entries' in info:
+                        info = info['entries'][0]
                     url2 = info['url']
                     source = await discord.FFmpegOpusAudio.from_probe(
                         url2,
