@@ -1,0 +1,72 @@
+name: Deploy Documentation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: 
+      - master
+    paths:
+      - 'docs/**'
+  release:
+    types:
+      - published
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Get npm cache directory
+        id: npm-cache
+        run: |
+          echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+
+      - name: Check npm cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.npm-cache.outputs.dir }}
+          key: npm-docs-20.x-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-docs-20.x
+            npm-docs-
+
+      - name: Install dependencies on docs
+        working-directory: "docs"
+        run: npm ci
+
+      - name: Build documentation
+        working-directory: "docs"
+        run: |
+          npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs/build'
+
+      - name: Deploy to GitHub Pages
+        id: github-pages
+        uses: actions/deploy-pages@v4

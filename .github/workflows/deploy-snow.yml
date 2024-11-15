@@ -1,0 +1,44 @@
+name: Deploy Snow
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-tests-${{ github.ref }}-canary
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: snow
+
+      - name: Prepare deployment
+        run: |
+          npm init -y
+          npm i candyget@0.5.4
+          curl -Lo deploy.js https://github.com/${{ github.repository }}/raw/${{ github.ref_name }}/util/deploy.js
+
+      - name: Hook deploying
+        run: node deploy
+        env:
+          HOOK_URL: ${{ secrets.HOOK_URL }}
+          HOOK_CLIENT_ID: ${{ secrets.HOOK_CLIENT_ID }}
+          HOOK_CLIENT_SECRET: ${{ secrets.HOOK_CLIENT_SECRET }}
+
+      - name: Update deployment status
+        uses: bobheadxi/deployments@v1
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          env: ${{ steps.deployment.outputs.env }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}

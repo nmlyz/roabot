@@ -1,0 +1,18 @@
+{
+  "adminId": null,
+  // TODO: set to false when releasing v4
+  "debug": true,
+  "maintenance": false,
+  "errorChannel": null,
+  "proxy": null,
+  "prefix": ">",
+  "webserver": true,
+  "bgm": {},
+  "noMessageContent": false,
+  "twentyFourSeven": [],
+  "alwaysTwentyFourSeven": false,
+  "disabledSources": [],
+  "cacheLevel": "memory",
+  "defaultLanguage": "ja",
+  "country": "JP"
+}

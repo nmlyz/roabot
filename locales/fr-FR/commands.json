@@ -1,0 +1,617 @@
+{
+  "bgm": {
+    "name": "BGM",
+    "description": "Vous pouvez afficher une liste de lecture prédéfinie de BGM pour l'étude et le travail créé par le développeur, et sélectionner et lire ce que vous voulez entendre.",
+    "listOfPresetBGM": "Liste de musiques prédéfinies"
+  },
+  "bulk_delete": {
+    "name": "バルク削除",
+    "usage": "バルク削除 <メッセージ数>",
+    "examples": "バルク削除 10",
+    "description": "ボットが送信したメッセージを一括削除します。過去1000件のメッセージを遡って検索します。",
+    "invalidMessageCount": "Nombre de messages spécifié non valide.",
+    "found_one": "{{count}} trouvé.",
+    "inCount_other": "sur {{count}} récupérés",
+    "inCount_one": "sur {{count}} récupérés",
+    "found_other": "{{count}} trouvé.",
+    "confirm": "Appuyez sur le bouton pour confirmer la suppression en bloc.\nS'il n'est pas enfoncé, il sera annulé après un certain temps.",
+    "auditLog_one": "{{count}} messages dont la suppression a été demandée par {{issuer}}.",
+    "auditLog_other": "{{count}} messages dont la suppression a été demandée par {{issuer}}.",
+    "finish": "Terminé ! (Ce message sera effacé automatiquement)",
+    "cancel": "Suppression annulée",
+    "hitCount_other": "{{count}} visites",
+    "hitCount_one": "{{count}} visites",
+    "loading": "obtenir",
+    "args": {
+      "count": {
+        "description": "削除するメッセージの上限数。100以下で設定してください。"
+      }
+    }
+  },
+  "bulk_play": {
+    "name": "バルク再生",
+    "usage": "バルク再生 <URLまたはキーワード> <URLまたはキーワード> ...",
+    "examples": "バルク再生 曲A 曲B 曲C",
+    "description": "いくつかの曲を一括でキューに追加します。",
+    "args": {
+      "keyword1": {
+        "description": "追加する曲のキーワードまたはURL。"
+      },
+      "keyword2": {
+        "description": "追加する曲のキーワードまたはURL。"
+      },
+      "keyword3": {
+        "description": "追加する曲のキーワードまたはURL。"
+      },
+      "keyword4": {
+        "description": "追加する曲のキーワードまたはURL。"
+      },
+      "keyword5": {
+        "description": "追加する曲のキーワードまたはURL。"
+      }
+    },
+    "partialSuccess": "一部の曲が見つかりませんでした。"
+  },
+  "cancel": {
+    "name": "Annuler",
+    "description": "Abandonne toutes les opérations annulables en cours.",
+    "canceling": "Annulation de tous les traitements en cours....",
+    "noCancelable": "Aucun processus ne peut être annulé."
+  },
+  "command": {
+    "name": "commande",
+    "usage": "commande [nom de la commande]",
+    "examples": "commande recherche",
+    "description": "Affichez la liste des commandes. La spécification d'un nom de commande affiche les détails de cette commande.",
+    "args": {
+      "command": {
+        "description": "Commande pour afficher les détails"
+      }
+    },
+    "categories": {
+      "voice": "Système d'exploitation du salon vocal",
+      "player": "Système de contrôle du lecteur de musique",
+      "playlist": "Système d'exploitation de la liste de lecture",
+      "utility": "Système utilitaire",
+      "bot": "Fonctionnement général du bot",
+      "settings": "設定"
+    },
+    "commandList": "Liste de commandes",
+    "toLearnMoreMessage": "Comme `{{prefix}} command replay`, vous pouvez ajouter un nom de commande comme argument pour afficher les détails de cette commande.",
+    "toLearnMoreInteraction": "Comme `/command play`, vous pouvez donner le nom de la commande comme argument pour afficher les détails de cette commande.",
+    "commandExplanation": "Détails de la commande `{{command}}`",
+    "usageLabel": "Usage",
+    "exampleLabel": "Cas d'utilisation",
+    "argumentDescription": "Les arguments entre `<>` sont des arguments obligatoires, les arguments entre `[]` sont des arguments facultatifs.",
+    "commandNotFound": "commande non trouvée"
+  },
+  "disconnect": {
+    "name": "Coupe",
+    "description": "se déconnecter du salon vocal"
+  },
+  "effect": {
+    "name": "effet",
+    "description": "Afficher le panneau de contrôle des effets.",
+    "effectControllPanel": {
+      "title": "panneau de contrôle des effets",
+      "description": "Les effets audio peuvent être réglés/désactivés.\n・L'affichage peut contenir des informations anciennes, mais elles seront mises à jour lorsque vous appuyez sur le bouton de mise à jour lorsque vous utilisez l'effet.\n・Les effets sont appliqués à partir de la chanson suivante.\nSi vous voulez l'appliquer au morceau en cours, utilisez la commande `cue`.",
+      "footer": "Sélectionnez un effet et appuyez sur le bouton",
+      "reload": "renouveler"
+    }
+  },
+  "end": {
+    "name": "finir avec cette chanson",
+    "description": "Supprime toutes les chansons sauf la chanson en cours de lecture (en attente de lecture).",
+    "queueWasEmpty": "Il n'a pas été supprimé car la file d'attente est vide ou il n'y a qu'une seule chanson.",
+    "success": "Chansons supprimées laissées dans la file d'attente."
+  },
+  "equalplayback": {
+    "name": "Jeu égal",
+    "description": "Jouez uniformément des chansons dans la file d'attente pour chaque utilisateur supplémentaire.",
+    "enabled": "Jeu égal activé",
+    "disabled": "J'ai désactivé la lecture égale",
+    "featureDescription": "Il s'agit d'une fonction qui le rend aussi uniforme que possible pour chaque utilisateur qui a ajouté des chansons lors de l'ajout de chansons."
+  },
+  "export": {
+    "name": "exporter",
+    "description": "Exportez le contenu de la file d'attente afin qu'il puisse être importé.",
+    "queueEmpty": "La file d'attente est vide et ne peut pas être exportée.",
+    "exported": "Exporté",
+    "compatiblity": "Version : v{{version}} compatible",
+    "importInstruction": "Lors de l'importation, spécifiez \"<{{url}}>\" comme argument de la commande `import`."
+  },
+  "frame": {
+    "name": "flamme",
+    "examples": "cadre 1:20",
+    "usage": "cadre [temps]",
+    "description": "Obtient une image d'image de la vidéo à la position de lecture actuelle, si possible. Obtient le cadre à ce point si un argument est spécifié.",
+    "args": {
+      "time": {
+        "description": "Obtient le cadre à ce point si spécifié."
+      }
+    },
+    "unsupported": "La source ne prend pas en charge la fonction de capture d'image.",
+    "fallbacking": "Cette fonctionnalité n'est pas disponible actuellement car nous utilisons une méthode non conventionnelle.",
+    "liveStreamWithTime": "L'heure ne peut pas être spécifiée pour les diffusions en direct.",
+    "invalidTime": "Spécification de temps invalide.",
+    "capturing": "obtenir",
+    "finish": "achèvement!",
+    "timeAt": "à {{hour}}:{{min}}:{{sec}}",
+    "failed": "Échoué à obtenir..."
+  },
+  "help": {
+    "name": "aider",
+    "description": "afficher l'aide",
+    "embedDescription": "Musique de haute qualité, conçue pour la meilleure expérience Discord",
+    "toLearnMore": "Utilisez {{command}} pour voir les commandes disponibles.",
+    "developer": "Développeur",
+    "version": "version",
+    "repository": "dépôt",
+    "sourceCode": "Code source",
+    "supportServer": "serveur d'assistance",
+    "availableSources": "Sources musicales actuellement prises en charge",
+    "keywordSearch": "Recherche par mot clé",
+    "videoUrl": "Spécifiez l'URL de la vidéo",
+    "playlistUrl": "Spécifiez l'URL de la liste de lecture",
+    "musicPageUrl": "Spécification de l'URL de la page de musique",
+    "discordAttachmentUrl": "Spécification de l'URL du message avec fichier audio en pièce jointe",
+    "driveShareUrl": "Spécification de l'URL du lien privé du fichier audio",
+    "tweetUrl": "Spécifiez l'URL du tweet",
+    "spotify": "URL des chansons et URL des listes de lecture. Devinez la chanson et écoutez-la depuis YouTube.",
+    "custom": "URL directe vers le fichier audio",
+    "googleDrive": "Google Drive",
+    "niconico": "Nico Nico Douga"
+  },
+  "import": {
+    "name": "importer",
+    "messageCommandName": "importer",
+    "description": "Importer une file d'attente à partir du message donné. Veuillez spécifier l'URL avec la sortie du fichier joint par la commande \"export\" comme argument.",
+    "examples": "importer https://discord.com/channels/...",
+    "usage": "Importer <URL à importer depuis>",
+    "args": {
+      "url": {
+        "description": "URL du message à importer depuis. Vous pouvez spécifier l'URL du message avec la sortie du fichier ymx par la commande d'exportation jointe."
+      }
+    },
+    "invalidArgumentMessage": "Transmettez l'URL du message avec la file d'attente intégrée à partir de laquelle importer en tant qu'argument.",
+    "noDiscordLink": "Fournissez un lien vers votre message Discord.",
+    "invalidLink": "L'URL spécifiée n'est pas valide.",
+    "loadingMessage": "recevoir un message",
+    "notBotMessage": "Pas un message de robot",
+    "versionIncompatible": "Le fichier spécifié ne peut pas être importé car les versions sont incompatibles.",
+    "current": "en vigueur",
+    "file": "Déposer",
+    "contentNotIncludedInMessage": "Le contenu cible n'a pas été trouvé."
+  },
+  "invoke": {
+    "name": "Invoquer",
+    "description": "Exécute la commande spécifiée. S'il vous plaît ne l'utilisez pas fondamentalement.",
+    "usage": "invoquer <commande>",
+    "examples": "Invoquer le jeu Courir dans la nuit",
+    "args": {
+      "command": {
+        "description": "commande à exécuter"
+      }
+    },
+    "recursiveInvoke": "La commande `invoke` ne peut pas être exécutée par la commande `invoke`.",
+    "executed": "réalisé",
+    "commandNotFound": "commande non trouvée",
+    "specialCommandNotFound": "Commande spéciale introuvable."
+  },
+  "join": {
+    "name": "Connecter",
+    "description": "Rejoignez le canal vocal.",
+    "alreadyConnected": "Vous êtes déjà connecté à un canal vocal."
+  },
+  "leaveclean": {
+    "name": "Organisez votre file d'attente",
+    "description": "Nettoyez en supprimant les chansons en file d'attente demandées par les personnes qui ont quitté votre canal vocal.",
+    "allRemoved": "Tout supprimé",
+    "queueEmpty": "la file d'attente est vide",
+    "removed_one": "{{count}} chansons supprimées",
+    "removed_other": "{{count}} chansons supprimées",
+    "removedNothing": "Il n'y avait rien à supprimer."
+  },
+  "log": {
+    "name": "Informations système",
+    "description": "Affiche des informations techniques sur les serveurs hébergés et les processus. Vous pouvez également spécifier des arguments (un parmi `mem`, `cpu`, `basic` et `log`) pour obtenir uniquement un contenu spécifique.",
+    "examples": "journaliser",
+    "usage": "log [mem|cpu|basic|log]",
+    "args": {
+      "content": {
+        "description": "Peut être basic,mem,cpu,log.",
+        "choices": {
+          "basic": "Informations de base",
+          "mem": "mémoire",
+          "cpu": "CPU",
+          "log": "Journaux (administrateurs uniquement)"
+        }
+      }
+    },
+    "executing": "実行します",
+    "guildName": "サーバー名",
+    "participatingGuildCount": "Nombre de serveurs participants",
+    "registeredGuildCount": "データが保持されているサーバー数",
+    "connectingGuildCount": "接続中サーバー数",
+    "playingGuildCount": "再生中サーバー数(一時停止含む)",
+    "pausedGuildCount": "一時停止サーバー数",
+    "guildSearchResult": "サーバー照会結果(秘)",
+    "guildId": "サーバーID",
+    "guildIcon": "サーバーアイコン",
+    "guildChannelCountFromCache": "チャンネル数(キャッシュによる)",
+    "guildConnecting": "接続中",
+    "guildPlaying": "再生中/一時停止中",
+    "guildPaused": "一時停止中",
+    "itemsInQueue": "キュー内のアイテム数",
+    "currentTransformingCost": "現在の変換コスト",
+    "liveStream": "ライブストリーム",
+    "memberCount": "メンバー数",
+    "version": "バージョン",
+    "managedCollectorsID": "保持されているコレクターのIDの合計",
+    "managedCollectors": "保持されているコレクター数",
+    "totalCost": "総変換コスト",
+    "memCacheTotal": "メモリキャッシュ数",
+    "memCacheGarbage": "廃棄メモリキャッシュ数",
+    "persistentCache": "恒常キャッシュサイズ",
+    "modules": "モジュール",
+    "incorrectArgument": "正しい引数を指定してください。"
+  },
+  "loop": {
+    "name": "boucle",
+    "description": "Définissez des boucles pour chaque piste.",
+    "disabled": "Répétition de piste désactivée",
+    "enabled": "Répétition de piste activée"
+  },
+  "looponce": {
+    "name": "ワンスループ",
+    "description": "現在再生中の再生が終了後、もう一度だけ同じ曲をループ再生します。",
+    "disabled": "ワンスループを無効にしました",
+    "enabled": "ワンスループを有効にしました"
+  },
+  "loopqueue": {
+    "disabled": "キューループを無効にしました。",
+    "enabled": "キューループを有効にしました。",
+    "name": "キューループ",
+    "description": "キュー内のループを設定します。"
+  },
+  "lyrics": {
+    "name": "Paroles",
+    "description": "Trouver les paroles de la chanson spécifiée.",
+    "examples": "Je cours dans la nuit",
+    "usage": "l <titre, artiste, etc.>",
+    "args": {
+      "keyword": {
+        "description": "Mots-clés pour rechercher des chansons"
+      }
+    },
+    "embedTitle": "Paroles de \"{{title}}\"({{artist}})",
+    "failed": "J'ai échoué. Veuillez vérifier le nom de la chanson et réessayer."
+  },
+  "move": {
+    "name": "déplacer",
+    "description": "Déplace le morceau de la position spécifiée à la position spécifiée dans la file d'attente. Si vous voulez déplacer la 2ème chanson vers la 5ème, utilisez `mv 2 5`.",
+    "examples": "déplacer 2 5",
+    "usage": "Déplacer <from> <to>",
+    "args": {
+      "from": {
+        "description": "Index de départ. Il est écrit avec la réplique."
+      },
+      "to": {
+        "description": "Index vers lequel se déplacer. Il est écrit avec la réplique."
+      }
+    },
+    "invalidArgumentCount": "Les arguments sont spécifiés comme `numéro d'origine de la chanson que vous souhaitez déplacer, numéro de la destination`.",
+    "invalidIndex": "Vous ne pouvez pas spécifier 0 comme source ou destination pendant que la musique est en cours de lecture (et en pause).",
+    "moved": "Déplacement de `{{title}}` de `{{from}}` à `{{to}}`.",
+    "originEqualsDestination": "Les chansons source et destination étaient les mêmes.",
+    "indexOutOfRange": "失敗しました。引数がキューの範囲外です。"
+  },
+  "movelastsongtofirst": {
+    "name": "最後の曲を先頭へ",
+    "description": "キューの最後の曲をキューの先頭に移動します。",
+    "usableWhen3orMoreQueue": "キューに3曲以上追加されているときに使用できます。",
+    "success": "`{{title}}`を一番最後からキューの先頭に移動しました。"
+  },
+  "news": {
+    "name": "ニュース",
+    "description": "現在配信されているニューストピックスを閲覧・視聴できます。",
+    "newsTopics": "ニューストピックス"
+  },
+  "nowplaying": {
+    "name": "現在再生中",
+    "description": "現在再生中の曲の情報を表示します。 `l`(スラッシュコマンドの場合はTrue)を引数にするとより長く概要を表示します。(可能な場合)",
+    "args": {
+      "detailed": {
+        "description": "Trueが指定された場合、可能な場合より長く詳細を表示します。"
+      }
+    },
+    "nowPlayingSong": "現在再生中の曲"
+  },
+  "pause": {
+    "name": "一時停止",
+    "description": "再生を一時停止します",
+    "alreadyPaused": "すでに一時停止されています",
+    "usePlayToResume": "再生を再開するには`再生`コマンドを使用してください。",
+    "paused": "一時停止しました"
+  },
+  "ping": {
+    "name": "ピング",
+    "description": "ボットのping時間(レイテンシ)を表示します。",
+    "pingInfo": "ping情報",
+    "botMessageReceive": "ボットメッセージ取得",
+    "botWebSocketConnection": "ボットWebSocket接続",
+    "voiceWsConnection": "ボイスチャンネルWebSocket接続"
+  },
+  "play": {
+    "name": "再生",
+    "messageCommandName": "再生",
+    "description": "キュー内の楽曲を再生します。引数として楽曲のURLやキーワードを指定することもできます。",
+    "args": {
+      "keyword": {
+        "description": "再生する動画のキーワードまたはURL。VCに未接続の場合接続してその曲を優先して再生します。接続中の場合はキューの末尾に追加します。一時停止中の場合はオプションは無視され、再生が再開されます。"
+      },
+      "audiofile": {
+        "description": "対応している音声ファイルをアップロードすることで、ファイルを再生することができます。"
+      }
+    },
+    "noContent": "再生するコンテンツがありません。",
+    "resuming": "再生を再開します。",
+    "noMusicFound": "該当する楽曲が見つかりませんでした。",
+    "playing": "再生します",
+    "alreadyPlaying": "すでに再生中です。",
+    "queueEmpty": "キューが空です。再生するコンテンツがありません。"
+  },
+  "play_private": {
+    "description": "URLを非公開のまま音楽をキューの末尾に追加し、状況に応じて再生を開始します。",
+    "noInteraction": "このコマンドをメッセージから実行することはできません",
+    "modalTitle": "再生したいURLを入力",
+    "inputLabel": "再生したいURL"
+  },
+  "queue": {
+    "name": "キュー",
+    "description": "キューを表示します",
+    "args": {
+      "page": {
+        "description": "表示するキューのページを指定することができます。"
+      }
+    },
+    "queueEmpty": "キューは空です",
+    "pageOutOfRange": "指定されたページは範囲外です。",
+    "songCount_one": "{{count}}曲",
+    "songCount_other": "{{count}}曲",
+    "total": "合計"
+  },
+  "radio": {
+    "name": "ラジオ",
+    "description": "指定されたYouTubeのURLの楽曲からラジオ（ミックスリスト）の再生を開始または停止します。何も指定しないと現在再生中の楽曲からラジオを開始します。",
+    "args": {
+      "url": {
+        "description": "ラジオのもととなる楽曲のYouTubeのURL"
+      }
+    },
+    "alreadyEnabled": "すでに有効になっています。別の曲のラジオを開始するには、現在再生されているミックスをいったんオフにする必要があります。",
+    "noUrlSpecified": "もととなる楽曲のURLをひとつ指定してください。",
+    "invalidUrl": "指定されたURLは有効なYouTubeのURLではありません。",
+    "started": "指定された楽曲でラジオを開始しました。",
+    "startedFromCurrentSong": "現在再生中の楽曲でラジオを開始しました。",
+    "stopped": "ラジオを終了しました。"
+  },
+  "related": {
+    "name": "関連動画",
+    "description": "YouTubeから楽曲を再生終了時に、関連曲をキューに自動で追加する機能の有効/無効を設定します。",
+    "disabled": "関連曲自動再生をオフにしました。",
+    "enabled": "関連曲自動再生をオンにしました。",
+    "featureDescription": "YouTubeからの楽曲再生終了時に、関連曲をキューの末尾に自動追加する機能です。",
+    "featureNote": "※YouTube以外のソースからの再生時、ループ有効時には追加されません。"
+  },
+  "remove": {
+    "name": "削除",
+    "description": "キュー内の指定された位置の曲を削除します。",
+    "examples": "rm 5",
+    "usage": "削除 <削除する位置>",
+    "args": {
+      "index": {
+        "description": "削除するインデックスはキューに併記されているものです。ハイフンを使って2-5のように範囲指定したり、スペースを使って1 4 8のように複数指定することも可能です。"
+      }
+    },
+    "noArgument": "引数に消去する曲のオフセット(番号)を入力してください。",
+    "invalidArgument": "現在再生中の楽曲を削除することはできません。",
+    "removedAt": "{{indexes}}番目の曲{{title}}を削除しました。",
+    "removedMany": "指定された曲を削除しました。",
+    "unableToRemoveAt": "{{indexes}}番目の曲は権限がないため削除できませんでした。",
+    "unableToRemoveMany": "一部の曲は権限がないため削除できませんでした。",
+    "unableToRemoveAll": "削除できませんでした。リクエストされた曲を削除するには権限が不足している可能性があります。"
+  },
+  "removeall": {
+    "name": "すべて削除",
+    "description": "キュー内の曲をすべて削除します。(接続中の場合ボイスチャンネルから離脱します。)",
+    "removed": "すべて削除しました"
+  },
+  "removedupes": {
+    "name": "重複削除",
+    "description": "キュー内の重複（ちょうふく）している曲を削除します。",
+    "removedMany": "重複していた曲を削除しました。",
+    "removedAt": "{{indexes}}番目の曲{{title}}を削除しました。",
+    "noSongRemoved": "削除できる楽曲がありませんでした。"
+  },
+  "reset": {
+    "name": "リセット",
+    "description": "サーバーのキュー、設定やデータを削除して初期化します。オプションとして`true`を指定してキューを保持したままにできます。\n※接続中の場合ボイスチャンネルから離脱します。",
+    "success": "サーバーの設定を初期化しました。",
+    "usage": "リセット true",
+    "args": {
+      "preservequeue": {
+        "description": "キューを保持するにはTrueを指定します。それでも解決しない場合はFalseを指定して再実行してください。"
+      }
+    }
+  },
+  "rewind": {
+    "name": "頭出し",
+    "description": "再生中の曲の頭出しを行い、初めから再生します。",
+    "success": "再生中の楽曲を頭出ししました。"
+  },
+  "search": {
+    "name": "recherche",
+    "description": "Recherchez des chansons sur YouTube.",
+    "examples": "Courir dans la nuit",
+    "usage": "rechercher <mot-clé>",
+    "args": {
+      "keyword": {
+        "description": "Mot-clé ou URL de la vidéo que vous souhaitez rechercher."
+      }
+    },
+    "noArgument": "Mot-clé ou URL de la vidéo que vous souhaitez rechercher."
+  },
+  "searchnico": {
+    "name": "ニコニコ動画を検索",
+    "description": "曲をニコニコ動画で検索します。",
+    "examples": "ニコニコを検索 セツナトリップ",
+    "usage": "ニコニコを検索 <キーワード>",
+    "args": {
+      "keyword": {
+        "description": "検索したい動画のキーワードまたはURL。"
+      }
+    },
+    "noArgument": "引数を指定してください。"
+  },
+  "searchqueue": {
+    "name": "Rechercher dans la file d'attente",
+    "description": "Recherche dans la file d'attente. Spécifiez un mot-clé pour l'argument.",
+    "examples": "faire semblant de suite",
+    "usage": "suite <mot-clé>",
+    "args": {
+      "keyword": {
+        "description": "Mot-clé de la chanson que vous souhaitez rechercher"
+      }
+    },
+    "queueEmpty": "la file d'attente est vide",
+    "embedDescription": "Résultats de la recherche dans la file d'attente. Jusqu'à 20 éléments sont affichés."
+  },
+  "searchsoundcloud": {
+    "name": "Rechercher",
+    "description": "Recherchez des chansons sur SoundCloud.",
+    "examples": "ses sakura trip",
+    "usage": "ses <mot-clé>",
+    "args": {
+      "keyword": {
+        "description": "Mot-clé ou URL de la chanson que vous souhaitez rechercher."
+      }
+    }
+  },
+  "seek": {
+    "name": "chercher",
+    "description": "Cherchez la musique.",
+    "examples": "chercher 0:30",
+    "usage": "chercher <heure (en secondes ou au format heures:minutes:secondes)>",
+    "args": {
+      "keyword": {
+        "description": "Chercher à temps"
+      }
+    },
+    "unseekable": "Cette chanson ne correspond pas à la destination de recherche.",
+    "invalidTime": "Cherchez à l'heure incorrecte.",
+    "seeking": "En cherchant",
+    "success": "recherché",
+    "failed": "la recherche a échoué"
+  },
+  "setting": {
+    "name": "設定",
+    "description": "ボットの設定を変更します。"
+  },
+  "setting>skipvote": {
+    "name": "設定>スキップ投票",
+    "description": "スキップ投票の有効・無効の設定をします。何も指定しないと現在の設定を確認できます。",
+    "args": {
+      "enabled": {
+        "description": "スキップ投票を有効にするかどうか。"
+      }
+    },
+    "currentState": "スキップ投票は現在 **{{status}}** の設定になっています。",
+    "changed": "スキップ投票を **{{status}}** にしました。"
+  },
+  "setting>nowplaying": {
+    "name": "設定>現在再生中",
+    "description": "現在再生中パネルの表示モードの設定をします。何も指定しないと現在の設定を確認できます。",
+    "args": {
+      "level": {
+        "description": "表示モードを指定します。",
+        "choices": {
+          "normal": "通常",
+          "silent": "サイレント",
+          "disabled": "無効"
+        }
+      }
+    },
+    "invalidLevel": "指定されたモードが正しくありません。normal, silent, disabledのいずれかを指定してください。",
+    "changed": "現在再生中パネルの表示モードを **{{level}}** に設定しました。",
+    "currentState": "現在再生中パネルの表示モードは現在 **{{level}}** に設定されています。"
+  },
+  "shuffle": {
+    "name": "mélanger",
+    "description": "Mélangez le contenu de la file d'attente.",
+    "queueEmpty": "La file d'attente est vide.",
+    "success": "mélangé"
+  },
+  "skip": {
+    "name": "sauter",
+    "description": "Éventuellement, sautez la chanson en cours de lecture ou lancez un vote de saut.",
+    "preparing": "Impossible de sauter car il se prépare actuellement à jouer.",
+    "votePanelAlreadyOpen": "Il y a un panneau de vote déjà ouvert.",
+    "success": "ignoré `{{title}}`",
+    "failed": "n'a pas réussi à sauter"
+  },
+  "sleeptimer": {
+    "name": "スリープタイマー",
+    "description": "指定された時間が経過した後に、音楽の再生を自動的に終了します。",
+    "examples": "スリープタイマー 5:00",
+    "usage": "スリープタイマー <時間(分:秒の形式で)または$で現在再生中の楽曲の終了時>",
+    "args": {
+      "time": {
+        "description": "スリープタイマーの時間。分:秒の形式で指定します。この曲で終了する場合は$を指定します。"
+      }
+    },
+    "done": "スリープタイマーを **{{time}}** に設定しました。",
+    "doneCurrentSong": "スリープタイマーを、この曲が終わるタイミングに設定しました。",
+    "canceled": "スリープタイマーをキャンセルしました。",
+    "invalidTime": "指定された時間が正しくありません。「時間:分:秒」の形式か、この曲で終了する場合は$と指定してください。",
+    "slept": "スリープタイマーの時間になったため、終了します。"
+  },
+  "thumbnail": {
+    "name": "vignette",
+    "description": "Affiche la vignette en cours de lecture. Si le panneau de recherche est ouvert et qu'un numéro dans le panneau de recherche est spécifié, la vignette de cette chanson s'affichera.",
+    "examples": "サムネイル 5",
+    "usage": "サムネイル [検索パネル中のインデックス]",
+    "args": {
+      "index": {
+        "description": "検索パネル中のインデックスを指定するとその項目のサムネイルを表示します。"
+      }
+    },
+    "noSearchPanelFound": "表示できるサムネイルがありません。"
+  },
+  "uptime": {
+    "name": "アップタイム",
+    "description": "ボットのアップタイムを表示します。",
+    "embedTitle": "{{name}}のアップタイム",
+    "elapsedAfterInstantiated": "インスタンス作成からの経過時間",
+    "elapsedAfterConnected": "Discordに接続してからの経過時間",
+    "registeredServerCount": "データが保持されているサーバー数",
+    "datetimeLabel": "{{hour}}時間{{min}}分{{sec}}秒",
+    "serverCount_one": "{{count}}サーバー",
+    "serverCount_other": "{{count}}サーバー"
+  },
+  "volume": {
+    "name": "ボリューム",
+    "description": "音量を調節します。1から200の間で指定します(デフォルト100)。何も引数を付けないと現在の音量を表示します。不安定になった場合には100に戻してください。",
+    "examples": "volume [音量]",
+    "usage": "volume 120",
+    "args": {
+      "volume": {
+        "description": "変更先の音量。1~200までが指定できます。"
+      }
+    },
+    "currentVolume": "現在の音量は**{{volume}}**です。(デフォルトは100)",
+    "outOfRange": "音量を変更する際は1から200の数字で指定してください。",
+    "changed": "音量を**{{volume}}**に変更しました。",
+    "appliedFromNext": "次の曲から適用されます。現在再生中の曲に設定を適用するには、`頭出し`コマンドなどを使用してください。"
+  }
+}

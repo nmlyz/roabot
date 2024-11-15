@@ -1,0 +1,48 @@
+name: Minor Release
+on:
+  workflow_dispatch:
+  
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Bump package version
+        id: bump-version
+        run: echo "VERSION=$(npm version minor --git-tag-version false)" >> $GITHUB_OUTPUT
+
+      - name: Check updated version
+        run: echo $VERSION
+        env:
+          VERSION: ${{ steps.bump-version.outputs.VERSION }}
+
+      - name: Install dependencies on documentation
+        working-directory: "docs"
+        run: npm i
+
+      - name: Frozen the current documentation
+        run: node docs/frozen-version.js
+        env:
+          VERSION: ${{ steps.bump-version.outputs.VERSION }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GH_PAT }}
+          commit-message: "Bump: package version to ${{ steps.bump-version.outputs.VERSION }}"
+          committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          signoff: false
+          branch: "bump/package/${{ steps.bump-version.outputs.VERSION }}"
+          labels: |
+            chore
+            bump
+          delete-branch: true
+          title: "Bump: package version to ${{ steps.bump-version.outputs.VERSION }}"

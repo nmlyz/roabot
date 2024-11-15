@@ -1,0 +1,56 @@
+name: Fix Lint Errors
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Check npm cache directory
+        id: npm-cache
+        run: |
+          echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+
+      - name: Check npm cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ steps.npm-cache.outputs.dir }}
+          key: npm-20.x-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-20.x-
+            npm-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fix lint errors
+        run: npm run lint -- --fix
+
+      - name: Build
+        run: npm run build
+
+      - name: Generate documentation of commands
+        run: |
+          cp util/config-for-test.json config.json
+          npm run generatecommandlist
+
+      - name: Commit & Push
+        run: |
+          git fetch
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .
+          git commit -m "Chore: fix lint issues" -m "* Automated changes"
+          git push
+

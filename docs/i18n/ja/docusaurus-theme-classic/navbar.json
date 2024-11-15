@@ -1,0 +1,26 @@
+{
+  "title": {
+    "message": "Discord-SimpleMusicBot",
+    "description": "The title in the navbar"
+  },
+  "item.label.ドキュメント": {
+    "message": "ドキュメント",
+    "description": "Navbar item with label ドキュメント"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  },
+  "item.label.機能ガイド": {
+    "message": "機能ガイド",
+    "description": "Navbar item with label 機能ガイド"
+  },
+  "logo.alt": {
+    "message": "Logo",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.使い方/ガイド": {
+    "message": "使い方/ガイド",
+    "description": "Navbar item with label 使い方/ガイド"
+  }
+}
