@@ -1,0 +1,22 @@
+{
+  "adminId": [
+    "573691184808067083"
+  ],
+  "debug": false,
+  "maintenance": false,
+  "errorChannel": "",
+  "prefix": ">",
+  "webserver": true,
+  "bgm": {},
+  "noMessageContent": false,
+  "twentyFourSeven": [],
+  "alwaysTwentyFourSeven": true,
+  "cacheLevel": "memory",
+  "cacheLimit": 500,
+  "defaultLanguage": "ja",
+  "country": "JP",
+  "botWhiteList": [],
+  "djRoleNames": [
+    "DJ"
+  ]
+}

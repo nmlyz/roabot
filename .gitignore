@@ -19,7 +19,9 @@ src/Commands/_index.ts
 
 # Configuration files
 *.env
-config.json
+# config.json を以下のように変更
+/config.json
+!app/config.json  # この行を追加
 docker-compose.yml
 compose.yml
 
