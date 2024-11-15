@@ -11,13 +11,13 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,t
    apt-get update && \
    apt-get install -y --no-install-recommends g++ make
 WORKDIR /app
-COPY --link package.json package-lock.json ./
+COPY --link app/package.json app/package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
    npm ci
-COPY --link ./src ./src
-COPY --link ./lib ./lib
-COPY --link ./builder.mjs ./
-COPY --link ./util/tsconfig/tsconfig.bundle.json ./util/tsconfig/
+COPY --link app/src ./src
+COPY --link app/lib ./lib
+COPY --link app/builder.mjs ./
+COPY --link app/util/tsconfig/tsconfig.bundle.json ./util/tsconfig/
 RUN node builder.mjs bake && \
    npx tsc -p util/tsconfig/tsconfig.bundle.json && \
    node builder.mjs bundle && \
@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,t
    apt-get update && \
    apt-get install -y --no-install-recommends build-essential
 WORKDIR /app
-COPY --link package.json package-lock.json ./
+COPY --link app/package.json app/package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
    npm ci --omit=dev
 
@@ -42,11 +42,10 @@ WORKDIR /app
 RUN mkdir logs && \
    echo DOCKER_BUILD_IMAGE>DOCKER_BUILD_IMAGE
 
-# 修正部分：appディレクトリからのファイルコピー
-COPY --link ./app/lib ./lib
-COPY --link ./app/locales ./locales
-COPY --link ./app/config.json ./config.json
-COPY --link package.json package-lock.json ./
+COPY --link app/lib ./lib
+COPY --link app/locales ./locales
+COPY --link app/config.json ./config.json
+COPY --link app/package.json app/package-lock.json ./
 COPY --link --from=deps /app/node_modules /app/node_modules
 COPY --link --from=builder /app/dist /app/dist
 
