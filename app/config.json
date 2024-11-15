@@ -4,7 +4,7 @@
   ],
   "debug": false,
   "maintenance": false,
-  "errorChannel": "",
+  "errorChannel": "null",
   "prefix": ">",
   "webserver": true,
   "bgm": {},
