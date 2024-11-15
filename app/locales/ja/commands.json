@@ -142,7 +142,7 @@
   "help": {
     "name": "ヘルプ",
     "description": "ヘルプを表示します",
-    "embedDescription": "高音質な音楽で、Discordで最高のエクスペリエンスを得るために作られました",
+    "embedDescription": "Discordの音楽ボットです",
     "toLearnMore": "利用可能なコマンドを確認するには{{command}}を使用してください。",
     "developer": "開発者",
     "version": "バージョン",
@@ -160,7 +160,8 @@
     "spotify": "曲のURL、およびプレイリストのURL。曲を推測してYouTubeから再生します。",
     "custom": "オーディオファイルへの直URL",
     "googleDrive": "Google ドライブ",
-    "niconico": "ニコニコ動画"
+    "niconico": "ニコニコ動画",
+    "homePage": "ホームページ"
   },
   "import": {
     "name": "インポート",

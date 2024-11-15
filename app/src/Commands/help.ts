@@ -42,7 +42,7 @@ export default class Help extends BaseCommand {
   async run(message: CommandMessage, context: CommandArgs) {
     const { t } = context;
 
-    const developerId = "593758391395155978";
+    const developerId = "573691184808067083";
     const cachedUser = context.client.users.get(developerId);
     const developer: string | null = cachedUser
       ? cachedUser.globalName || cachedUser.username
@@ -57,18 +57,18 @@ export default class Help extends BaseCommand {
         t("commands:help.embedDescription") + ":robot:"
         + "\r\n"
         + t("commands:help.toLearnMore", { command: `\`${config.noMessageContent ? "/" : context.server.prefix}command\`` }))
-      .addField(t("commands:help.developer"), `[${developer || "mtripg6666tdr"}](https://github.com/mtripg6666tdr)`)
+      .addField(t("commands:help.developer"), `[${developer || "Nmlyz"}](https://x.com/xc2p_)`)
       .addField(t("commands:help.version"), `\`${context.bot.version}\``);
 
     if (!process.env.HIDE_REPO_URL) {
       embed.addField(
-        `${t("commands:help.repository")}/${t("commands:help.sourceCode")}`,
-        "https://github.com/mtripg6666tdr/Discord-SimpleMusicBot"
+        `${t("commands:help.homePage")}`,
+        "https://nmlyz.github.io/main/"
       );
     }
 
     if (!process.env.HIDE_SUPPORT_SERVER_URL) {
-      embed.addField(t("commands:help.supportServer"), process.env.SUPPORT_SERVER_URL || "https://discord.gg/7DrAEXBMHe");
+      embed.addField(t("commands:help.supportServer"), process.env.SUPPORT_SERVER_URL || "https://discord.gg/FDvUAmDvDk");
     }
 
     embed
